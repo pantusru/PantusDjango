@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -40,11 +41,22 @@ admin.site.register(PopularProduct, PopularProductAdmin)
 class NewsAdminForm(forms.ModelForm):
 
     body = forms.CharField(label='Текст', widget=CKEditorUploadingWidget())
-    body_text_preview = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':127}))
+    body_text_preview = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':135}))
+
 
     class Meta:
         model = News
         fields = '__all__'
+
+
+
+    def clean_slug(self):
+        formslug = self.cleaned_data['slug']
+        slugs = News.objects.order_by().values('slug').distinct()
+        for currentslug in slugs:
+            if formslug == currentslug['slug']:
+                raise forms.ValidationError('Значения Slug должны быть уникальные: такое значение уже существует')
+        return formslug
 
 
 @admin.register(News)
@@ -53,10 +65,8 @@ class NewsAdmin (admin.ModelAdmin):
 
     list_display = ['id', 'title', 'short_body_text_preview', 'image_tag', 'author', 'created_at', 'slug']
     list_display_links = ('id', 'title')
-    readonly_fields = ('image_tag', )
-    form = NewsAdminForm
 
-    prepopulated_fields = {"slug": ("title",)}
+    form = NewsAdminForm
 
     #переопределяем метод записи в в БД
     def save_model(self, request, obj, form, change):
@@ -72,7 +82,8 @@ class NewsAdmin (admin.ModelAdmin):
                        'body',
                        'keywords',
                        'category',
-                       'slug'
+                       'slug',
+                       #'combined_fields',
                        )
         }),
         # ('Advanced options', {
@@ -81,6 +92,12 @@ class NewsAdmin (admin.ModelAdmin):
         # }),
     )
 
+    readonly_fields = ('image_tag', 'slug')
+
+
+
+    # def combined_fields(self, obj):
+    #     return obj.combined_fields()
 
 @admin.register(NewsCategory)
 class NewsAdmin (admin.ModelAdmin):

@@ -56,30 +56,13 @@ class News (models.Model):
             return 'No Image Found'
 
     image_tag.short_description = 'Изображение'
-
     body_text_preview = models.CharField(max_length=200)
     body = RichTextUploadingField(blank=True)
-
-
-    # CATEGORY_CHOICES = (
-    #     ('activity', 'Акции'),
-    #     ('interesting', 'Интересное'),
-    #     ('company_news', 'Новости компании'),
-    #     ('useful_tips', 'Полезные советы'),
-    #     ('interview', 'Интересное'),
-    #     ('novelty', 'Новинки'),
-    #     ('site_updates', 'Обновления сайта'),
-    # )
-
     category = models.ForeignKey('NewsCategory', verbose_name="Категория", on_delete=models.CASCADE, blank=True, null=True, related_name='category')
     keywords = models.CharField(max_length=100)
-    author = models.ForeignKey('auth.User',   on_delete=models.CASCADE, editable=False, null=True, default=None)
-    created_at = models.DateTimeField()
-    slug = models.SlugField(blank=True, unique=True)
-
-
-    #def advanced_create_at(self):
-
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE, editable=False, null=True, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(blank=True)
 
     @property
     def short_body_text_preview(self):
@@ -87,7 +70,7 @@ class News (models.Model):
 
 
     class Meta:
-        ordering = ['id', 'title']
+        ordering = ['-id', 'title']
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
 
@@ -95,7 +78,19 @@ class News (models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             # Newly created object, so set slug
+
+            slugs = News.objects.order_by().values('slug').distinct()
+            for currentslug in slugs:
+                if formslug == currentslug['slug']:
+                    raise forms.ValidationError('Значения Slug должны быть уникальные: такое значение уже существует')
+            return formslug
+
+
             self.slug = slugify(self.title)
+
+
+
+
         super(News, self).save(*args, **kwargs)
 
 
