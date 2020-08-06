@@ -52,10 +52,12 @@ class NewsAdminForm(forms.ModelForm):
 class NewsAdmin (admin.ModelAdmin):
 
 
-    list_display = ['id', 'title', 'short_body_text_preview', 'image_tag', 'author', 'created_at', 'slug']
+    list_display = ['id', 'title', 'short_body_text_preview', 'image_tag', 'category', 'author', 'created_at', 'slug']
     list_display_links = ('id', 'title')
 
     form = NewsAdminForm
+
+    list_filter = ['category']
 
     #переопределяем метод записи в в БД
     def save_model(self, request, obj, form, change):
@@ -81,6 +83,7 @@ class NewsAdmin (admin.ModelAdmin):
         # }),
     )
     readonly_fields = ('image_tag', 'slug')
+
 
 
 
