@@ -6,13 +6,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-
-# class GetCountForNewsCategory:
-#     class Meta:
-#         madel= News
-#         fields = ('id')
-
-
 class NewsCategorySerializer (serializers.ModelSerializer):
     """категории"""
 
@@ -58,6 +51,16 @@ class NewsDetailSerializer (serializers.ModelSerializer):
     class Meta:
         model = News
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['created_at'] = [
+                                        {"year": instance.created_at.strftime("%Y"),
+                                         "month": instance.created_at.strftime("%m"),
+                                         "day": instance.created_at.strftime("%d")}
+                                        ]
+        return representation
 
 
 

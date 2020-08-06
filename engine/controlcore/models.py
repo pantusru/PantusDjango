@@ -1,5 +1,7 @@
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.forms import forms
 from django.template.defaultfilters import truncatechars
 from django.utils.safestring import mark_safe
 
@@ -76,23 +78,28 @@ class News (models.Model):
 
     #создаем слаг только при создании нового объекта
     def save(self, *args, **kwargs):
-        if not self.id:
-            # Newly created object, so set slug
-
-            slugs = News.objects.order_by().values('slug').distinct()
-            for currentslug in slugs:
-                if formslug == currentslug['slug']:
-                    raise forms.ValidationError('Значения Slug должны быть уникальные: такое значение уже существует')
-            return formslug
-
-
-            self.slug = slugify(self.title)
-
-
-
+        # Тут методы записи
 
         super(News, self).save(*args, **kwargs)
 
+    def is_available(self):
+
+        is_check=True
+        slugs = News.objects.order_by().values('slug').distinct()
+        # проверка на то что создаем новый объект, а не редактируем старый
+        if not self.id:
+            self.slug = slugify(self.title)
+            # проверка слага на существование
+            for currentslug in slugs:
+                if self.slug == currentslug['slug']:
+                    print(self.slug, ' == ', currentslug['slug'])
+                    is_check = False
+        return is_check
+
+    #Пуляем еррор в форму если условия false
+    def clean(self):
+        if not self.is_available():
+            raise ValidationError('Такой slug уже существует, измените название статьи')
 
     def __str__(self):
         return self.title

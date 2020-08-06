@@ -43,20 +43,9 @@ class NewsAdminForm(forms.ModelForm):
     body = forms.CharField(label='Текст', widget=CKEditorUploadingWidget())
     body_text_preview = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':135}))
 
-
     class Meta:
         model = News
         fields = '__all__'
-
-
-
-    def clean_slug(self):
-        formslug = self.cleaned_data['slug']
-        slugs = News.objects.order_by().values('slug').distinct()
-        for currentslug in slugs:
-            if formslug == currentslug['slug']:
-                raise forms.ValidationError('Значения Slug должны быть уникальные: такое значение уже существует')
-        return formslug
 
 
 @admin.register(News)
@@ -91,7 +80,6 @@ class NewsAdmin (admin.ModelAdmin):
         #     'fields': ('registration_required', 'template_name'),
         # }),
     )
-
     readonly_fields = ('image_tag', 'slug')
 
 

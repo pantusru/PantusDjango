@@ -54,20 +54,9 @@ class NewsCategoryList (APIView):
 
 
 
-
-
-"""PAGES"""
-
-def help(request):
-    return render(
-        request,
-        'help.html',
-    )
-
 class GetNewsForCategory(APIView):
 
     def get(self, request):
-
 
         id = request.GET['id']  # http://127.0.0.1:8000/api/v1/news/category/?id=4
         try:
@@ -80,12 +69,10 @@ class GetNewsForCategory(APIView):
             return Response(serializer.data)
 
 
-# class AdvancedCreateAtNewsSerializer (APIView):
-#
-#
-#
-#     def get_create_at(self, request):
-#             # This kind of method should be like get_<fieldYouWantToGet>()
-#
-#         print('ddfffffffffffffffffffffffffffffffffff')
-#         #return News.nickname
+
+"""PAGES"""
+def help(request):
+    return render(
+        request,
+        'help.html',
+    )
