@@ -15,5 +15,5 @@ from bs4 import BeautifulSoup as BS
 
 # Create your views here.
 
-# декоратор проверка авторизации
+
 

@@ -1,27 +1,24 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.forms import forms
 from django.template.defaultfilters import truncatechars
-from django.urls import reverse
 from django.utils.safestring import mark_safe
-
 from pytils.translit import slugify
 
 class NewsCategory(models.Model):
+    '''Категории новостей'''
     name = models.CharField(max_length=30)
 
     class Meta:
-        verbose_name = 'Категория новостей'
-        verbose_name_plural = 'Категории новостей'
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
 
 
 
-# Create your models here.
-
+#тестовая хрень, удалить потом
 class PopularProduct(models.Model):
     """Model representing an author."""
 
@@ -46,12 +43,14 @@ class PopularProduct(models.Model):
         """String for representing the Model object."""
         return f'{self.product_name}, {self.product_id}'
 
+
 class News (models.Model):
     """новости"""
 
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='news/', null=True, blank=True)
 
+    # Обработка изображений, что бы была картинки в админке, а не ссылки
     def image_tag(self):
         if self.image:
             return mark_safe('<img src="%s" style="width: 45px; height:45px;" />' % self.image.url)
@@ -67,24 +66,23 @@ class News (models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(blank=True)
 
+    #Обрезаем текст превью если больше 200 символов
     @property
     def short_body_text_preview(self):
         return truncatechars(self.body_text_preview, 200)
 
-
     class Meta:
         ordering = ['-id', 'title']
-        verbose_name = 'Новость'
-        verbose_name_plural = 'Новости'
+        verbose_name = 'Статья'
+        verbose_name_plural = 'Статьи'
 
-    #создаем слаг только при создании нового объекта
+
+    # Тут ovveride метод записи
     def save(self, *args, **kwargs):
-        # Тут методы записи
-
         super(News, self).save(*args, **kwargs)
 
+    # Проверка условий slug
     def is_available(self):
-
         is_check=True
         slugs = News.objects.order_by().values('slug').distinct()
         # проверка на то что создаем новый объект, а не редактируем старый
@@ -97,7 +95,7 @@ class News (models.Model):
                     is_check = False
         return is_check
 
-    #Пуляем еррор в форму если условия false
+    #Пуляем еррор в форму если условия slug false
     def clean(self):
         if not self.is_available():
             raise ValidationError('Такой slug уже существует, измените название статьи')
@@ -106,17 +104,7 @@ class News (models.Model):
         return self.title
 
 
-class Author(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
-    date_of_death = models.DateField('Died', null=True, blank=True)
 
-    def get_absolute_url(self):
-        return reverse('author-detail', args=[str(self.id)])
-
-    def __str__(self):
-        return '%s, %s' % (self.last_name, self.first_name)
 
 
 

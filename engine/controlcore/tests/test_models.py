@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.test import TestCase
+from pytils.translit import slugify
 
 from ..models import News
 from ..models import NewsCategory
@@ -12,7 +13,6 @@ class YourTestClass(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-
         NewsCategory.objects.create(
             name='testcategory'
         )
@@ -22,8 +22,6 @@ class YourTestClass(TestCase):
         )
 
         News.objects.create(
-
-            # id=44,
             title='ТЕСТ',
             image='"/media/news/2019/04/10/preview_news_id_186957.jpg"',
             body_text_preview='ТЕСТ',
@@ -33,7 +31,7 @@ class YourTestClass(TestCase):
             author=User.objects.get(id=1),
             # 24.03.2017 07:35:17 datetime.strptime(data['data']['dates']['created'], '%d.%m.%Y %H:%M:%S')
             created_at=datetime.strptime('24.03.2017 07:35:17', '%d.%m.%Y %H:%M:%S'),
-            slug = 'TEST'
+            #slug = 'TEST'
         )
 
     def setUp(self):
@@ -64,3 +62,11 @@ class YourTestClass(TestCase):
         expected_object_name = '%s' % (news.title)
         self.assertEquals(expected_object_name, str(news))
 
+
+    def test_slug_generation(self):
+
+        lol = News.objects.create(title='ТЕСТ', id=0)
+        lol.keywords='asdasdasd'
+        lol.is_available()
+        lol.save()
+        self.assertEqual(lol.slug, slugify('ТЕСТ'), 'Ошибка генерации или коррекнтности слага')

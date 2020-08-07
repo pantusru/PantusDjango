@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
 
-class BackapiConfig(AppConfig):
-    name = 'Ядро управления'
+class NewsConfig(AppConfig):
+    name = 'controlcore'
+    verbose_name = "Новости"

@@ -1,10 +1,6 @@
 from django import forms
 from django.contrib import admin
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from django.core.exceptions import ValidationError
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
-
 from .models import PopularProduct
 from .models import News
 from .models import NewsCategory
@@ -12,20 +8,14 @@ from django.contrib import messages
 from django.utils.translation import ngettext
 
 
-
-
-
-
 # Register your models here.
 
-admin.site.site_header = "My admin panel"
-
-
-#admin.site.register(PopularProduct)
-
+admin.site.site_header = "Панель управления"
 
 
 class PopularProductAdmin(admin.ModelAdmin):
+    """не нужно, удлить потом"""
+
     list_display = ('product_id', 'product_name', 'created_at')
     def make_published(self, request, queryset):
         updated = queryset.update(status='p')
@@ -34,29 +24,26 @@ class PopularProductAdmin(admin.ModelAdmin):
             '%d stories were successfully marked as published.',
             updated,
         ) % updated, messages.SUCCESS)
-
 admin.site.register(PopularProduct, PopularProductAdmin)
 
 
 class NewsAdminForm(forms.ModelForm):
+    """расширяем админ форму"""
 
-    body = forms.CharField(label='Текст', widget=CKEditorUploadingWidget())
+    body = forms.CharField(label='Текст', widget=CKEditorUploadingWidget()) # прикручиваем виджет едитора, вместо чарфилда
     body_text_preview = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':135}))
 
     class Meta:
         model = News
         fields = '__all__'
 
-
 @admin.register(News)
 class NewsAdmin (admin.ModelAdmin):
-
+    """Модель новостей в админке"""
 
     list_display = ['id', 'title', 'short_body_text_preview', 'image_tag', 'category', 'author', 'created_at', 'slug']
     list_display_links = ('id', 'title')
-
     form = NewsAdminForm
-
     list_filter = ['category']
 
     #переопределяем метод записи в в БД
@@ -74,7 +61,6 @@ class NewsAdmin (admin.ModelAdmin):
                        'keywords',
                        'category',
                        'slug',
-                       #'combined_fields',
                        )
         }),
         # ('Advanced options', {
@@ -84,14 +70,10 @@ class NewsAdmin (admin.ModelAdmin):
     )
     readonly_fields = ('image_tag', 'slug')
 
-
-
-
-    # def combined_fields(self, obj):
-    #     return obj.combined_fields()
-
 @admin.register(NewsCategory)
 class NewsAdmin (admin.ModelAdmin):
+    """МОдель админ категории"""
+
     list_display = ['id', 'name']
 
 
