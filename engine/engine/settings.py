@@ -46,8 +46,11 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'siteapi',
-    'controlcore',
+    'news',
+    'catalog',
     'rest_framework',
+    #'mptt',
+
 
 
 ]
@@ -90,8 +93,12 @@ WSGI_APPLICATION = 'engine.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'pantusreactivewebservice',
+        'USER': 'pantus',
+        'PASSWORD': 'GmhLPN8XmfVRyxR8p84g2msRXxtFBytV',
+        'HOST': '194.67.113.201',
+        'PORT': '5433',
     }
 }
 
@@ -130,18 +137,6 @@ USE_TZ = True
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-# STATIC_URL = '/static/'
-# #STATIC_DIR = os.path.join(BASE_DIR, 'static')
-# #STATICFILES_DIR = [STATIC_DIR]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# #CKEDITOR_UPLOAD_PATH = "uploads/"
-# CKEDITOR_UPLOAD_PATH = "uploads/"
-
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -150,6 +145,7 @@ STATIC_URL = '/static/'
 CKEDITOR_UPLOAD_PATH = 'news/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
 
 
 

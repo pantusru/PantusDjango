@@ -4,9 +4,9 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import NewsListSerializer
-from controlcore.models import News
+from news.models import News
 from .serializers import NewsDetailSerializer
-from controlcore.models import NewsCategory
+from news.models import NewsCategory
 from .serializers import NewsCategorySerializer
 
 

@@ -1,1 +1,0 @@
-default_app_config = 'controlcore.apps.NewsConfig'

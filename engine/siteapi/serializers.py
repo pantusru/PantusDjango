@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from controlcore.models import News
-from controlcore.models import NewsCategory
+from news.models import News
+from news.models import NewsCategory
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
