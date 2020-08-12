@@ -1,6 +1,9 @@
 
-
+from django import forms
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
+from mptt.forms import TreeNodeChoiceField
+
 from .models import *
 
 
@@ -64,14 +67,27 @@ class ProductAdmin(admin.ModelAdmin):
     #inlines = [BrandItemInlineAdmin]
 
 
+
+class TestAdminForm (MPTTModelAdmin.form):
+
+    parent = TreeNodeChoiceField(queryset=Genre.objects.all(), level_indicator=u'---')
+    class Meta:
+        model = Test
+        fields = '__all__'
+
+
+
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'parent_id']
+    form = TestAdminForm
 
 
 
+class TestAdm(MPTTModelAdmin):
+    list_display = ['name', 'id', ]
 
-#admin.site.register(Genre, MPTTModelAdmin)
+admin.site.register(Genre, TestAdm)
 
 
 

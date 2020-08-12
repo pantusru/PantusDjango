@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'news',
     'catalog',
     'rest_framework',
-    #'mptt',
+    'mptt',
 
 
 
