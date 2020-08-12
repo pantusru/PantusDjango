@@ -68,7 +68,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 
-class TestAdminForm (MPTTModelAdmin.form):
+class TestAdminForm (forms.ModelForm):
 
     parent = TreeNodeChoiceField(queryset=Genre.objects.all(), level_indicator=u'---')
     class Meta:

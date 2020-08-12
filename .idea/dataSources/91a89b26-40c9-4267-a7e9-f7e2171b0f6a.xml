@@ -57708,6 +57708,7 @@ r/10
     </table>
     <table id="4791" parent="15" name="catalog_genre">
       <ObjectId>17221</ObjectId>
+      <Outdated>1</Outdated>
       <Owner>pantus</Owner>
       <StateNumber>1012</StateNumber>
     </table>

@@ -104,14 +104,13 @@ class Genre(MPTTModel):
     def __str__(self):
         return self.name
 
-class Test(MPTTModel):
+class Test(models.Model):
     name = models.CharField(max_length=100)
-    #depthlvl = models.IntegerField()
-    parent = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True, blank=True)
-    #lol = models.ForeignKey(Brand, on_delete=models.CASCADE, blank=True, null=True,)
 
-    class MPTTMeta:
-        order_insertion_by = ['name']
+    parent = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True, blank=True)
+
+
+
 
     def __str__(self):
         return self.name

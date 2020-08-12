@@ -29,8 +29,7 @@ urlpatterns = [
 urlpatterns += [
     path('news/', include('news.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    #path('treewidget/', include('treewidget.urls')),
-
+    path('catalog/', include('catalog.urls')),
     path('api/v1/', include('siteapi.urls'))
 ] + static(settings.MEDIA_URL,
            document_root=settings.MEDIA_ROOT)
