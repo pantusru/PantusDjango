@@ -56,61 +56,68 @@ from mptt.models import MPTTModel
 
 
 
-class Brand(models.Model):
-    #id = models.AutoField(primary_key=True, )
-    active = models.BooleanField(default=False)
-    bitrix_id = models.IntegerField()
-    name = models.CharField(max_length=64)
-    code = models.CharField(max_length=64)
-   # test = models.ForeignKey(Test, on_delete=models.CASCADE, blank=True, null=True,)
+# class Brand(models.Model):
+#     #id = models.AutoField(primary_key=True, )
+#     active = models.BooleanField(default=False)
+#     bitrix_id = models.IntegerField()
+#     name = models.CharField(max_length=64)
+#     code = models.CharField(max_length=64)
+#    # test = models.ForeignKey(Test, on_delete=models.CASCADE, blank=True, null=True,)
+#
+#     class Meta:
+#         ordering = ['-id', 'name']
+#         verbose_name = 'Брэнд'
+#         verbose_name_plural = 'Брэнды'
+#
+#     def __str__(self):
+#         return self.name
+
+
+
+
+# class ProductCategoryRelated(models.Model):
+#     category_id = models.ForeignKey()
+#     product_id = models.ForeignKey()
+
+
+
+
+
+class ProductCategory(MPTTModel):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, null=True, blank=True,)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     class Meta:
-        ordering = ['-id', 'name']
-        verbose_name = 'Брэнд'
-        verbose_name_plural = 'Брэнды'
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
 
-
+    def get_products(self):
+        return self.category_products.all()
 
 
 class Product(models.Model):
+
     pantus_id = models.IntegerField()
-    active = models.BooleanField(default=False)
-    sku = models.CharField(max_length=255)
-    brand_id = models.ForeignKey(Brand, verbose_name="brand_id", on_delete=models.CASCADE, blank=True, null=True, related_name='brand')
     name = models.CharField(max_length=1024)
+    sku = models.CharField(max_length=255)
     oem_list = models.CharField(max_length=255)
     nomenclature_code = models.CharField(max_length=255)
+    active = models.BooleanField(default=False)
+    category = models.ManyToManyField(ProductCategory, related_name="category_products")
+
 
     class Meta:
         ordering = ['-id', 'name']
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
-
-    def __str__(self):
-        return self.name
-
-
-
-class Genre(MPTTModel):
-    name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
-
-    def __str__(self):
-        return self.name
-
-class Test(models.Model):
-    name = models.CharField(max_length=100)
-
-    parent = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True, blank=True)
-
-
-
 
     def __str__(self):
         return self.name

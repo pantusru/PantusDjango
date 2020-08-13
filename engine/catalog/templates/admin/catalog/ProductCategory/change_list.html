@@ -1,0 +1,18 @@
+
+
+{% extends "admin/mptt_change_list.html" %}
+{% block object-tools %}
+  <form action="http://127.0.0.1:8000/catalog/product/category" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Импорт" />
+  </form>
+    <br />
+    {{ block.super }}
+{% endblock %}
+
+
+
+
+
+
+

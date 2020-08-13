@@ -1,8 +1,10 @@
+from gettext import ngettext
 
 from django import forms
 from django.contrib import admin
+from django.core.checks import messages
 from mptt.admin import MPTTModelAdmin
-from mptt.forms import TreeNodeChoiceField
+from mptt.forms import TreeNodeChoiceField, TreeNodeMultipleChoiceField
 
 from .models import *
 
@@ -55,39 +57,47 @@ from .models import *
 
 #admin.site.register(CategoryItemInlineAdmin_lvl_2, CategoryAdmin)
 
-class BrandItemInlineAdmin(admin.TabularInline):
-    model = Product
-    #fields = ['id', 'name']
+# class BrandItemInlineAdmin(admin.TabularInline):
+#     model = Product
+#     #fields = ['id', 'name']
+#
+#
+# @admin.register(Brand)
+# class ProductAdmin(admin.ModelAdmin):
+#    # list_display = ['id', 'pantus_id', 'active', 'sku', 'name', 'oem_list', 'nomenclature_code']
+#     list_display = ['id', 'name']
+#     #inlines = [BrandItemInlineAdmin]
 
 
-@admin.register(Brand)
-class ProductAdmin(admin.ModelAdmin):
-   # list_display = ['id', 'pantus_id', 'active', 'sku', 'name', 'oem_list', 'nomenclature_code']
-    list_display = ['id', 'name']
-    #inlines = [BrandItemInlineAdmin]
 
-
-
-class TestAdminForm (forms.ModelForm):
-
-    parent = TreeNodeChoiceField(queryset=Genre.objects.all(), level_indicator=u'---')
+class ProductAdminForm (forms.ModelForm):
+    category = TreeNodeMultipleChoiceField(queryset=ProductCategory.objects.all(), level_indicator=u'|--')
     class Meta:
-        model = Test
+        model = Product
         fields = '__all__'
 
 
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
 
-@admin.register(Test)
-class TestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'parent_id']
-    form = TestAdminForm
+    list_display = ['id', 'pantus_id', 'name', 'sku',  'oem_list', 'nomenclature_code', 'active', ]
+    form = ProductAdminForm
+
+@admin.register(ProductCategory)
+class ProductCategoryAdmin(MPTTModelAdmin, ):
+    change_list_template = "admin/catalog/ProductCategory/change_list.html"
+
+    def make_published(self, request, queryset):
+        updated = queryset.update(status='p')
+        self.message_user(request, ngettext(
+            '%d story was successfully marked as published.',
+            '%d stories were successfully marked as published.',
+            updated,
+        ) % updated, messages.SUCCESS)
 
 
-
-class TestAdm(MPTTModelAdmin):
     list_display = ['name', 'id', ]
 
-admin.site.register(Genre, TestAdm)
 
 
 
