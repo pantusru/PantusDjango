@@ -52,9 +52,9 @@ class NewsCategoryList (APIView):
         return Response(serializer.data)
 
 
-class GetNewsForCategory(APIView):
+class GetNewsForCategory(APIView, LimitOffsetPagination):
     """ Вывод статей по категории
-    news/category/?id=4
+    news/category/?id=4&limit=10&offset=0
     """
 
     def get(self, request):
@@ -64,7 +64,8 @@ class GetNewsForCategory(APIView):
         except News.DoesNotExist:
             return HttpResponse(status=201)
         if request.method == 'GET':
-            serializer = NewsDetailSerializer(snippet, many=True)
+            results = self.paginate_queryset(snippet, request, view=self)
+            serializer = NewsDetailSerializer(results, many=True)
             return Response(serializer.data)
 
 

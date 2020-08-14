@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
@@ -84,10 +85,10 @@ from mptt.models import MPTTModel
 
 
 class ProductCategory(MPTTModel):
+    """категории продуктов"""
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255, null=True, blank=True,)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -96,23 +97,20 @@ class ProductCategory(MPTTModel):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
+
+
     def __str__(self):
         return self.name
 
-    def get_products(self):
-        return self.category_products.all()
-
-
 class Product(models.Model):
-
+    """Продукты"""
     pantus_id = models.IntegerField()
     name = models.CharField(max_length=1024)
     sku = models.CharField(max_length=255)
     oem_list = models.CharField(max_length=255)
     nomenclature_code = models.CharField(max_length=255)
     active = models.BooleanField(default=False)
-    category = models.ManyToManyField(ProductCategory, related_name="category_products")
-
+    category = models.ManyToManyField(ProductCategory, related_name="category_related")
 
     class Meta:
         ordering = ['-id', 'name']
