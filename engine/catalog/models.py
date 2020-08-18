@@ -1,94 +1,19 @@
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-
-
-# class CategoryDepthLevel_1(models.Model):
-#     category_id = models.IntegerField()
-#     parent_id = models.IntegerField()
-#     name = models.CharField(max_length=150)
-#     code = models.CharField(max_length=150)
-#     depthlevel = models.IntegerField()
-#
-#     class Meta:
-#         ordering = ['-id', 'name']
-#         verbose_name = 'Категория уровень 1'
-#         verbose_name_plural = 'Категории уровень 1'
-#
-#     def __str__(self):
-#         return self.name
-#
-#
-# class CategoryDepthLevel_2(models.Model):
-#     category_id = models.IntegerField()
-#     parent_id = models.ForeignKey(CategoryDepthLevel_1, verbose_name="parent_id", on_delete=models.CASCADE,
-#                                   related_name='category_parent_id_lvl_2')
-#     name = models.CharField(max_length=150)
-#     code = models.CharField(max_length=150)
-#     depthlevel = models.IntegerField()
-#
-#     class Meta:
-#         ordering = ['-id', 'name']
-#         verbose_name = 'Категория уровень 2'
-#         verbose_name_plural = 'Категории уровень 2'
-#
-#     def __str__(self):
-#         return self.name
-#
-#
-# class CategoryDepthLevel_3(models.Model):
-#     category_id = models.IntegerField()
-#     parent_id = models.ForeignKey(CategoryDepthLevel_2, verbose_name="parent_id", on_delete=models.CASCADE,
-#                                   related_name='category_parent_id_lvl_3')
-#     name = models.CharField(max_length=150)
-#     code = models.CharField(max_length=150)
-#     depthlevel = models.IntegerField()
-#
-#     class Meta:
-#         ordering = ['-id', 'name']
-#         verbose_name = 'Категория уровень 3'
-#         verbose_name_plural = 'Категории уровень 3'
-#
-#     def __str__(self):
-#         return self.name
-
-
-
-# class Brand(models.Model):
-#     #id = models.AutoField(primary_key=True, )
-#     active = models.BooleanField(default=False)
-#     bitrix_id = models.IntegerField()
-#     name = models.CharField(max_length=64)
-#     code = models.CharField(max_length=64)
-#    # test = models.ForeignKey(Test, on_delete=models.CASCADE, blank=True, null=True,)
-#
-#     class Meta:
-#         ordering = ['-id', 'name']
-#         verbose_name = 'Брэнд'
-#         verbose_name_plural = 'Брэнды'
-#
-#     def __str__(self):
-#         return self.name
-
-
-
-
-# class ProductCategoryRelated(models.Model):
-#     category_id = models.ForeignKey()
-#     product_id = models.ForeignKey()
-
-
-
+from treenode.models import TreeNodeModel
 
 
 class ProductCategory(MPTTModel):
     """категории продуктов"""
+
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255, null=True, blank=True,)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', db_index=True)
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -97,13 +22,17 @@ class ProductCategory(MPTTModel):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
-
-
     def __str__(self):
-        return self.name
+        return '%s %s %s %s %s' % (self.id, self.name, self.code, self.level, self.parent)
+
+
+
+
+
 
 class Product(models.Model):
     """Продукты"""
+
     pantus_id = models.IntegerField()
     name = models.CharField(max_length=1024)
     sku = models.CharField(max_length=255)
@@ -119,3 +48,21 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+
+class CategoryTest(TreeNodeModel):
+
+    # the field used to display the model instance
+    # default value 'pk'
+    treenode_display_field = 'name'
+
+
+
+    name = models.CharField(max_length=50)
+
+
+    class Meta(TreeNodeModel.Meta):
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
