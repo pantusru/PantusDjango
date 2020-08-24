@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'treenode',
     'mptt',
+    'imagekit',
 
 
 
@@ -143,7 +144,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_URL = '/static/'
-CKEDITOR_UPLOAD_PATH = 'news/'
+
+CKEDITOR_UPLOAD_PATH = 'temp_editor/'
+CKEDITOR_RESTRICT_BY_DATE = False # сортировка картинок по дате загрузки
+#CKEDITOR_BROWSE_SHOW_DIRS = True # отображение директорий при выборе
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -215,7 +219,10 @@ CKEDITOR_CONFIGS = {
             'elementspath',
             'youtube'
         ]),
-    }
+    },
+    # 'applicabilities' : {
+    #    # 'filebrowserUploadUrl': '/img/applicabilities/'
+    # }
 }
 
 REST_FRAMEWORK = {
